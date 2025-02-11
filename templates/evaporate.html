@@ -1,0 +1,29 @@
+<!-- templates/evaporate.html -->
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>אידוי</h2>
+
+<div class="section">
+    <p><strong>זמן פעילות:</strong> {{ elapsed_time }} seconds</p>
+</div>
+
+<div class="section">
+    <p><strong>Temperature Indicator:</strong> {{ temperature }} °C</p>
+</div>
+
+<div class="section">
+    <p><strong>Running Status:</strong> {{ status }}</p>
+</div>
+
+<form method="POST">
+    <button type="submit" name="action" value="start">Start</button>
+    <button type="submit" name="action" value="pause">Pause</button>
+    <button type="submit" name="action" value="stop">Stop</button>
+</form>
+
+<div class="section">
+    <p><strong>Total Working Hours (accumulative):</strong> {{ total_hours }}</p>
+</div>
+
+{% endblock %}

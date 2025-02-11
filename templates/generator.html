@@ -1,0 +1,51 @@
+<!-- templates/generator.html -->
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>גנרטור</h2>
+
+<!-- 4 Time Options -->
+<form method="POST">
+    <p><strong>בחר זמן התחלה / טיפול:</strong></p>
+    <select name="time_option">
+        <option value="4cyl_under_250k">מנוע 4 צילנדרים עד 250 אלף ק"מ טיפול שעה</option>
+        <option value="over_4cyl_or_over_250k">מעל 4 צילינדרים או מעל 250 אלף ק"מ טיפול שעה וחצי</option>
+        <option value="over_4cyl_and_over_250k">מעל 4 צילינדרים ומעל 250 אלף ק"מ שעתיים</option>
+        <option value="manual">הפעל באופן ידני</option>
+    </select>
+    <button type="submit" name="action" value="choose_time_option">בחר</button>
+</form>
+
+<!-- Show chosen run time (for reference) -->
+<p>Chosen Runtime (seconds): {{ chosen_run_time }}</p>
+
+<div class="section">
+    <p><strong>זמן פעילות:</strong> {{ elapsed_time }} seconds</p>
+</div>
+
+<div class="section">
+    <p><strong>Power of generator:</strong> {{ power }}%</p>
+    <form method="POST">
+        <button type="submit" name="action" value="change_power">Switch Power (50%/100%)</button>
+    </form>
+</div>
+
+<div class="section">
+    <p><strong>Temperature Indicator:</strong> {{ temperature }} °C</p>
+</div>
+
+<div class="section">
+    <p><strong>Running Status:</strong> {{ status }}</p>
+</div>
+
+<form method="POST">
+    <button type="submit" name="action" value="start">Start</button>
+    <button type="submit" name="action" value="pause">Pause</button>
+    <button type="submit" name="action" value="stop">Stop</button>
+</form>
+
+<div class="section">
+    <p><strong>Total Working Hours (accumulative):</strong> {{ total_hours }}</p>
+</div>
+
+{% endblock %}

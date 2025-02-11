@@ -1,0 +1,50 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Raspberry Pi App</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .nav-bar {
+            margin-bottom: 20px;
+        }
+        .nav-link {
+            margin-right: 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #4285f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .nav-link:hover {
+            background-color: #3367d6;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+        <a class="nav-link" href="{{ url_for('generator') }}">גנרטור</a>
+        <a class="nav-link" href="{{ url_for('evaporate') }}">אידוי</a>
+        <a class="nav-link" href="{{ url_for('settings') }}">Settings</a>
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome to the Raspberry Pi App</h1>
+
+<div>
+    <a href="{{ url_for('generator') }}">
+        <button>גנרטור</button>
+    </a>
+    <a href="{{ url_for('evaporate') }}">
+        <button>אידוי</button>
+    </a>
+    <a href="{{ url_for('settings') }}">
+        <button>Settings</button>
+    </a>
+</div>
+{% endblock %}
