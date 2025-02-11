@@ -2,7 +2,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>מערכת לניקוי גז ברכבים</h1>
-
+    <img src="{{ url_for('static', filename='images/logo.png') }}"
+         alt="My Logo"
+         style="width: 120px; /* adjust size to your liking */" />
 <div class="card">
   <p class="info-text">בחר את הפעולה הרצויה:</p>
   <div class="flex-row">
