@@ -1,9 +1,19 @@
 <!-- templates/settings.html -->
 {% extends 'base.html' %}
 {% block content %}
-
 <h2>Settings</h2>
-<p><strong>Generator Total Working Hours:</strong> {{ generator_hours }}</p>
-<p><strong>Evaporate Total Working Hours:</strong> {{ evaporate_hours }}</p>
+<div class="card">
+  <p><strong>Generator Total Working Hours:</strong> 
+     <span class="info-text">{{ generator_hours }}</span>
+  </p>
+  <p><strong>Evaporate Total Working Hours:</strong> 
+     <span class="info-text">{{ evaporate_hours }}</span>
+  </p>
+</div>
 
+<div class="section">
+  <a href="{{ url_for('index') }}">
+    <button>Return to Home</button>
+  </a>
+</div>
 {% endblock %}

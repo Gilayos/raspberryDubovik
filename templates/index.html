@@ -1,17 +1,20 @@
 <!-- templates/index.html -->
 {% extends 'base.html' %}
 {% block content %}
-<h1>Welcome to the Raspberry Pi App</h1>
+<h1>מערכת לניקוי גז ברכבים</h1>
 
-<div>
+<div class="card">
+  <p class="info-text">בחר את הפעולה הרצויה:</p>
+  <div class="flex-row">
     <a href="{{ url_for('generator') }}">
-        <button>גנרטור</button>
+      <button>גנרטור</button>
     </a>
     <a href="{{ url_for('evaporate') }}">
-        <button>אידוי</button>
+      <button>אידוי</button>
     </a>
     <a href="{{ url_for('settings') }}">
-        <button>Settings</button>
+      <button>Settings</button>
     </a>
+  </div>
 </div>
 {% endblock %}

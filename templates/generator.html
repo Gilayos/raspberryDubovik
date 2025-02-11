@@ -1,51 +1,164 @@
 <!-- templates/generator.html -->
 {% extends 'base.html' %}
 {% block content %}
+<!-- Back arrow at top -->
+<div class="back-arrow">
+  <a href="{{ url_for('index') }}" class="arrow-link">←</a>
+</div>
 
 <h2>גנרטור</h2>
 
-<!-- 4 Time Options -->
-<form method="POST">
-    <p><strong>בחר זמן התחלה / טיפול:</strong></p>
-    <select name="time_option">
-        <option value="4cyl_under_250k">מנוע 4 צילנדרים עד 250 אלף ק"מ טיפול שעה</option>
-        <option value="over_4cyl_or_over_250k">מעל 4 צילינדרים או מעל 250 אלף ק"מ טיפול שעה וחצי</option>
-        <option value="over_4cyl_and_over_250k">מעל 4 צילינדרים ומעל 250 אלף ק"מ שעתיים</option>
-        <option value="manual">הפעל באופן ידני</option>
-    </select>
-    <button type="submit" name="action" value="choose_time_option">בחר</button>
-</form>
+<div class="card">
+  <!-- Choose Time Option -->
+  <form method="POST" class="section">
+      <p><strong>בחר זמן התחלה / טיפול:</strong></p>
+      <select name="time_option">
+          <option value="4cyl_under_250k">מנוע 4 צילנדרים עד 250 אלף ק"מ (1 שעה)</option>
+          <option value="over_4cyl_or_over_250k">מעל 4 צילנדרים או מעל 250 אלף ק"מ (1.5 שעות)</option>
+          <option value="over_4cyl_and_over_250k">מעל 4 צילנדרים ומעל 250 אלף ק"מ (2 שעות)</option>
+          <option value="manual">הפעל באופן ידני</option>
+      </select>
+      <button type="submit" name="action" value="choose_time_option">בחר</button>
+  </form>
 
-<!-- Show chosen run time (for reference) -->
-<p>Chosen Runtime (seconds): {{ chosen_run_time }}</p>
+  <div class="section">
+      <p><strong>זמן פעילות:</strong>
+         <span id="elapsedTime" class="info-text">{{ elapsed_time }}</span> שניות
+      </p>
 
-<div class="section">
-    <p><strong>זמן פעילות:</strong> {{ elapsed_time }} seconds</p>
+      <p><strong>סך הזמן הנבחר:</strong>
+         <span class="info-text" id="chosenTimeLabel">
+           {{ chosen_run_time_label if chosen_run_time_label else '' }}
+         </span>
+      </p>
+
+      <!-- Remaining minutes if we have a plan -->
+      <p id="remainingSection" style="display: none;">
+        <strong>נותר:</strong>
+        <span id="remainingMinutes" class="info-text"></span> דקות
+      </p>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-container" id="progressContainer" style="display: none;">
+      <progress id="timeProgress" value="0" max="100"></progress>
+  </div>
+
+  <div class="section">
+      <p><strong>Power of generator:</strong>
+         <span class="info-text">{{ power }}%</span>
+      </p>
+      <form method="POST">
+          <button type="submit" name="action" value="change_power">
+            Cycle Power (50% → 75% → 100%)
+          </button>
+      </form>
+  </div>
+
+  <div class="section">
+      <p><strong>Temperature Indicator:</strong>
+         <span class="info-text">UnAvailable</span>
+      </p>
+  </div>
+
+  <div class="section">
+      <p><strong>Running Status:</strong>
+         <span id="runningStatus">{{ status }}</span>
+      </p>
+  </div>
+
+  <!-- Control Buttons -->
+  <form method="POST" class="section flex-row">
+      <button type="submit" name="action" value="start" onclick="startRealtimeUpdates()">Start</button>
+      <button type="submit" name="action" value="pause">Pause</button>
+      <button type="submit" name="action" value="stop" onclick="stopRealtimeUpdates()">Stop</button>
+  </form>
+
+  <div class="section">
+      <p><strong>Total Working Hours (accumulative):</strong>
+         <span class="info-text">{{ total_hours }}</span>
+      </p>
+  </div>
 </div>
 
-<div class="section">
-    <p><strong>Power of generator:</strong> {{ power }}%</p>
-    <form method="POST">
-        <button type="submit" name="action" value="change_power">Switch Power (50%/100%)</button>
-    </form>
-</div>
+<!-- Real-time update script -->
+<script>
+  let updateInterval = null;
 
-<div class="section">
-    <p><strong>Temperature Indicator:</strong> {{ temperature }} °C</p>
-</div>
+  function startRealtimeUpdates() {
+    if (!updateInterval) {
+      updateInterval = setInterval(fetchGeneratorStatus, 1000);
+    }
+  }
 
-<div class="section">
-    <p><strong>Running Status:</strong> {{ status }}</p>
-</div>
+  function stopRealtimeUpdates() {
+    if (updateInterval) {
+      clearInterval(updateInterval);
+      updateInterval = null;
+    }
+  }
 
-<form method="POST">
-    <button type="submit" name="action" value="start">Start</button>
-    <button type="submit" name="action" value="pause">Pause</button>
-    <button type="submit" name="action" value="stop">Stop</button>
-</form>
+  function fetchGeneratorStatus() {
+    fetch('/generator_status')
+      .then(response => response.json())
+      .then(data => {
+        const elapsedElem           = document.getElementById('elapsedTime');
+        const statusElem            = document.getElementById('runningStatus');
+        const progressElem          = document.getElementById('timeProgress');
+        const chosenTimeLabelElem   = document.getElementById('chosenTimeLabel');
+        const remainingSection      = document.getElementById('remainingSection');
+        const remainingMinutesElem  = document.getElementById('remainingMinutes');
+        const progressContainer     = document.getElementById('progressContainer');
 
-<div class="section">
-    <p><strong>Total Working Hours (accumulative):</strong> {{ total_hours }}</p>
-</div>
+        // Elapsed time in seconds
+        elapsedElem.textContent = data.elapsed_time;
 
+        // Running status
+        statusElem.textContent = data.status;
+
+        // Time label
+        chosenTimeLabelElem.textContent = data.chosen_run_time_label || "";
+
+        // If we have a chosen_run_time > 0, show progress bar & remaining
+        if (data.chosen_run_time > 0) {
+          progressContainer.style.display = "block";
+          remainingSection.style.display  = "block";
+
+          const elapsedSec = data.elapsed_time;
+          const totalSec   = data.chosen_run_time;
+          const remainSec  = totalSec - elapsedSec;
+
+          // Percentage
+          const percent = (elapsedSec / totalSec) * 100;
+          progressElem.value = Math.min(percent, 100);
+
+          // Remaining minutes
+          let remainMins = 0;
+          if (remainSec > 0) {
+            remainMins = Math.ceil(remainSec / 60);
+          }
+          remainingMinutesElem.textContent = remainMins;
+        } else {
+          progressContainer.style.display = "none";
+          remainingSection.style.display  = "none";
+        }
+
+        // If generator is Idle, stop polling
+        if (data.status === 'Idle') {
+          stopRealtimeUpdates();
+        }
+      })
+      .catch(err => console.error('Error fetching generator status:', err));
+  }
+
+  // Auto-start polling if we're already "Started"
+  window.addEventListener('load', function() {
+    let currentServerStatus = "{{ status }}"; // e.g. "Started", "Paused", or "Idle"
+
+    // If you also want to keep updating while "Paused", do: if (["Started","Paused"].includes(currentServerStatus)) ...
+    if (currentServerStatus === "Started") {
+      startRealtimeUpdates();
+    }
+  });
+</script>
 {% endblock %}
